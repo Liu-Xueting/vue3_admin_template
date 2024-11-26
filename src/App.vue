@@ -6,6 +6,7 @@
 
 <script setup lang="ts">
 const str = "我爱你祖国";
+const str2 = "I love China";
 </script>
 
 <style scoped lang="scss">
