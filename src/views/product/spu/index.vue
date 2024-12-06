@@ -1,11 +1,13 @@
 <template>
     <div>
         <Category :scene="scene"></Category>
-        <el-card style="margin: 10px 0px;">
+        <el-card style="margin: 10px 0px">
             <div v-show="scene == 0">
                 <el-button type="primary" size="default" icon="Plus" :disabled="categoryStore.c3Id ? false : true"
-                    @click="addSpu">添加SPU</el-button>
-                <el-table style="margin: 10px 0px;" border :data="records">
+                    @click="addSpu">
+                    添加SPU
+                </el-button>
+                <el-table style="margin: 10px 0px" border :data="records">
                     <el-table-column label="序号" type="index" align="center" width="80px"></el-table-column>
                     <el-table-column label="SPU名称" prop="spuName"></el-table-column>
                     <el-table-column label="SPU描述" prop="description" show-overflow-tooltip></el-table-column>
@@ -13,7 +15,7 @@
                         <!-- row:即为已有的SPU对象 -->
                         <template #="{ row, $index }">
                             <el-button type="primary" size="small" icon="Plus" title="添加SKU"
-                                @click="addSku(row)"></el-button>
+                                @click="addSku()"></el-button>
                             <el-button type="primary" size="small" icon="Edit" title="修改SPU"
                                 @click="updateSpu(row)"></el-button>
                             <el-button type="primary" size="small" icon="View" title="查看SKU列表"
@@ -23,7 +25,6 @@
                                     <el-button type="primary" size="small" icon="Delete" title="删除SPU"></el-button>
                                 </template>
                             </el-popconfirm>
-
                         </template>
                     </el-table-column>
                 </el-table>
@@ -46,10 +47,9 @@
                     <el-table-column prop="weight" label="SKU重量(g)"></el-table-column>
                     <el-table-column label="图片">
                         <template #="{ row }">
-                            <img :src="row.skuDefaultImg" style="width: 100px; height: 100px;" />
+                            <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
                         </template>
                     </el-table-column>
-
                 </el-table>
             </el-dialog>
         </el-card>
@@ -59,14 +59,21 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from 'vue'
 // 引入分类仓库
-import useCategoryStore from '@/store/modules/category';
+import useCategoryStore from '@/store/modules/category'
 import { reqHasSpu, reqSkuList, reqRemoveSpu } from '@/api/product/spu/index'
-import { HasSpuResponseData, Records, SpuData, SkuInfoData, SkuData } from '@/api/product/spu/type'
+import {
+    HasSpuResponseData,
+    Records,
+    SpuData,
+    SkuInfoData,
+    SkuData,
+} from '@/api/product/spu/type'
 import SpuForm from './spuForm.vue'
 import SkuForm from './skuForm.vue'
+import { ElMessage } from 'element-plus'
 let categoryStore = useCategoryStore()
 // 场景的数据
-let scene = ref<number>(0)   // 0:显示已有SPU 1:添加|修改SPU 2:添加SKU
+let scene = ref<number>(0) // 0:显示已有SPU 1:添加|修改SPU 2:添加SKU
 // 当前页码
 let pageNo = ref<number>(1)
 // 每页展示数据量
@@ -84,19 +91,26 @@ let spu = ref<any>()
 let sku = ref<any>()
 
 // 监听三级分类改变
-watch(() => categoryStore.c3Id, () => {
-    if (!categoryStore.c3Id) {
-        return;
-    }
-    // 获取已有品牌数据
-    getHasSpu()
-})
+watch(
+    () => categoryStore.c3Id,
+    () => {
+        if (!categoryStore.c3Id) {
+            return
+        }
+        // 获取已有品牌数据
+        getHasSpu()
+    },
+)
 
 // 获取已有品牌数据
 const getHasSpu = async (pager = 1) => {
     // 修改当前页码
     pageNo.value = pager
-    let result: HasSpuResponseData = await reqHasSpu(pageNo.value, pageSize.value, categoryStore.c3Id)
+    let result: HasSpuResponseData = await reqHasSpu(
+        pageNo.value,
+        pageSize.value,
+        categoryStore.c3Id,
+    )
     if (result.code == 200) {
         records.value = result.data.records
         total.value = result.data.total
@@ -123,7 +137,6 @@ const changeScene = (obj: any) => {
         // 添加留在第一页
         getHasSpu()
     }
-
 }
 
 const updateSpu = (row: SpuData) => {
@@ -135,7 +148,6 @@ const updateSpu = (row: SpuData) => {
 const addSku = () => {
     scene.value = 2
     sku.value.initSkuData()
-
 }
 
 // 查找sku列表
@@ -153,13 +165,13 @@ const removeSpu = async (row: SpuData) => {
     if (result.code === 200) {
         ElMessage({
             type: 'success',
-            message: '删除成功'
+            message: '删除成功',
         })
-        getSpuList(records.value.length > 1 ? pageNo.value : pageNo.value - 1)
+        getHasSpu(records.value.length > 1 ? pageNo.value : pageNo.value - 1)
     } else {
         ElMessage({
             type: 'error',
-            message: '删除失败'
+            message: '删除失败',
         })
     }
 }
