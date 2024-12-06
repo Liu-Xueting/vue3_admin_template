@@ -1,0 +1,34 @@
+// 引入reset.scss 清除默认样式
+@import './reset.scss';
+
+// 设置scss全局变量
+// $color: red;
+
+// 滚动条外观 火狐浏览器
+// ::-webkit-scrollbar {
+//   width: 10px;
+// }
+// ::-webkit-scrollbar-track {
+//   background: $base-menu-background;
+// }
+
+// // 滚动条图标  IE浏览器
+// ::-webkit-scrollbar-thumb {
+//   width: 10px;
+//   background-color: yellowgreen;
+//   border-radius: 10px;
+// }
+
+div::-webkit-scrollbar {
+  width: 10px;
+}
+div::-webkit-scrollbar-track {
+  background: $base-menu-background;
+}
+
+// 滚动条图标
+div::-webkit-scrollbar-thumb {
+  width: 10px;
+  background-color: yellowgreen;
+  border-radius: 10px;
+}
